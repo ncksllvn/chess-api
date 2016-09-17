@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from tornado import gen
 import chess
 
 from app.handlers import BaseHandler, engine
@@ -8,33 +9,66 @@ class GameHandler(BaseHandler):
 
     def get(self):
         fen = self.get_argument('fen', None)
-        self.write_board(chess.Board(fen))
+        self.write_board(fen)
 
     def post(self):
-        self.write_board(chess.Board())
+        self.write_board(board=chess.Board())
 
+    @gen.coroutine
     def put(self):
 
         fen = self.get_argument('fen', None)
-        move = self.get_argument('move', None)
+        move = self.get_argument('move', 'ai')
 
-        if not fen or not move:
+        if not fen:
             self.set_status(400)
             return
 
-        self.do_move(chess.Board(fen), move)
+        if move == 'ai':
+            yield self.do_ai_move(fen)
+            return
 
-    def do_move(self, board: chess.Board, move: str):
+        self.do_move(fen, move)
+
+    @gen.coroutine
+    def do_ai_move(self, fen):
 
         try:
+            board = chess.Board(fen)
+
+            yield engine.position(board, async_callback=True)
+            command = engine.go(async_callback=True)
+
+            yield command
+
+            bestmove, ponder = command.result()
+
+            board.push(bestmove)
+            self.write_board(board=board)
+
+        except ValueError:
+            self.set_status(400)
+            return
+
+    def do_move(self, fen:str, move:str):
+
+        try:
+            board = chess.Board(fen)
             board.push_uci(move)
         except ValueError:
             self.set_status(400)
             return
 
-        self.write_board(board)
+        self.write_board(board=board)
 
-    def write_board(self, board: chess.Board):
+    def write_board(self, fen:str='', board:chess.Board=None):
+
+        if not board:
+            try:
+                board = chess.Board(fen)
+            except ValueError:
+                self.set_status(400)
+                return
 
         if self.get_argument('format', 'json') == 'ascii':
             self.write_ascii(board.fen())
