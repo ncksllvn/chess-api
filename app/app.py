@@ -15,4 +15,7 @@ class Application(tornado.web.Application):
             (r'/', IndexHandler),
             (r'/game', GameHandler),
         ]
-        super(Application, self).__init__(handlers)
+        settings = dict(
+            debug=options.debug,
+        )
+        super(Application, self).__init__(handlers, **settings)

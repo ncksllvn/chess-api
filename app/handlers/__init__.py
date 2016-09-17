@@ -1,7 +1,7 @@
 import os.path
 from chess import uci
 
-path = __path__[0] + '../../../engine/stockfish/Mac/stockfish-7-64'
+path = __path__[0] + '../../../engines/stockfish/Mac/stockfish-7-64'
 
 engine = uci.popen_engine(os.path.abspath(path))
 engine.uci()
