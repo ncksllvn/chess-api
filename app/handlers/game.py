@@ -13,9 +13,27 @@ class GameHandler(BaseHandler):
     def post(self):
         self.write_game(chess.STARTING_FEN)
 
+    def put(self):
+        fen = self.get_argument('fen', None)
+        move = self.get_argument('move', None)
+
+        if not fen or not move:
+            self.set_status(400)
+            return
+
+        board = chess.Board(fen)
+
+        try:
+            board.push_uci(move)
+        except ValueError:
+            self.set_status(400)
+            return
+
+        self.write_game(board.fen())
+
     def write_game(self, fen:str):
 
-        if self.get_argument('diagram', False):
+        if self.get_argument('format', 'json') == 'ascii':
             self.write_diagram(fen)
             return
 
