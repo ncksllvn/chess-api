@@ -1,7 +1,6 @@
 from collections import OrderedDict
 import chess
 
-
 from app.handlers import BaseHandler, engine
 
 
@@ -25,32 +24,32 @@ class GameHandler(BaseHandler):
         output = OrderedDict([
 
             ('fen', fen),
-            ('fullmove_number', board.fullmove_number),
+            ('fullmoveNumber', board.fullmove_number),
             ('result', board.result()),
-            ('is_game_over', board.is_game_over()),
-            ('is_checkmate',board.is_checkmate()),
-            ('is_stalemate', board.is_stalemate()),
-            ('is_insufficient_material', board.is_insufficient_material()),
-            ('is_seventyfive_moves', board.is_seventyfive_moves()),
-            ('is_fivefold_repetition', board.is_fivefold_repetition()),
+            ('isGameOver', board.is_game_over()),
+            ('isCheckmate',board.is_checkmate()),
+            ('isStalemate', board.is_stalemate()),
+            ('isInsufficientMaterial', board.is_insufficient_material()),
+            ('isSeventyfiveMoves', board.is_seventyfive_moves()),
+            ('isFivefoldRepetition', board.is_fivefold_repetition()),
 
             ('white', OrderedDict([
-                ('has_kingside_castling_rights', board.has_kingside_castling_rights(chess.WHITE)),
-                ('has_queenside_castling_rights', board.has_queenside_castling_rights(chess.WHITE)),
+                ('hasKingsideCastlingRights', board.has_kingside_castling_rights(chess.WHITE)),
+                ('hasQueensideCastlingRights', board.has_queenside_castling_rights(chess.WHITE)),
             ])),
 
             ('black', OrderedDict([
-                ('has_kingside_castling_rights', board.has_kingside_castling_rights(chess.BLACK)),
-                ('has_queenside_castling_rights', board.has_queenside_castling_rights(chess.BLACK)),
+                ('hasKingsideCastlingRights', board.has_kingside_castling_rights(chess.BLACK)),
+                ('hasQueensideCastlingRights', board.has_queenside_castling_rights(chess.BLACK)),
             ])),
 
             ('turn', OrderedDict([
                 ('color', 'white' if board.turn is chess.WHITE else 'black'),
-                ('is_in_check', board.is_check()),
-                ('legal_moves', [move.uci() for move in board.legal_moves]),
-                ('can_claim_draw', board.can_claim_draw()),
-                ('can_claim_fifty_moves', board.can_claim_fifty_moves()),
-                ('can_claim_threefold_repetition', board.can_claim_threefold_repetition())
+                ('isInCheck', board.is_check()),
+                ('legalMoves', [move.uci() for move in board.legal_moves]),
+                ('canClaimDraw', board.can_claim_draw()),
+                ('canClaimFiftyMoves', board.can_claim_fifty_moves()),
+                ('canClaimThreefoldRepetition', board.can_claim_threefold_repetition())
             ]))
 
         ])
