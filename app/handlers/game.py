@@ -7,13 +7,14 @@ from app.handlers import BaseHandler, engine
 class GameHandler(BaseHandler):
 
     def get(self):
-        fen = self.get_argument('fen', chess.STARTING_FEN)
-        self.write_game(fen)
+        fen = self.get_argument('fen', None)
+        self.write_board(chess.Board(fen))
 
     def post(self):
-        self.write_game(chess.STARTING_FEN)
+        self.write_board(chess.Board())
 
     def put(self):
+
         fen = self.get_argument('fen', None)
         move = self.get_argument('move', None)
 
@@ -21,7 +22,9 @@ class GameHandler(BaseHandler):
             self.set_status(400)
             return
 
-        board = chess.Board(fen)
+        self.do_move(chess.Board(fen), move)
+
+    def do_move(self, board: chess.Board, move: str):
 
         try:
             board.push_uci(move)
@@ -29,19 +32,18 @@ class GameHandler(BaseHandler):
             self.set_status(400)
             return
 
-        self.write_game(board.fen())
+        self.write_board(board)
 
-    def write_game(self, fen:str):
+    def write_board(self, board: chess.Board):
 
         if self.get_argument('format', 'json') == 'ascii':
-            self.write_diagram(fen)
+            self.write_ascii(board.fen())
             return
 
-        board = chess.Board(fen)
         current_turn = board.turn
         output = OrderedDict([
 
-            ('fen', fen),
+            ('fen', board.fen()),
             ('fullmoveNumber', board.fullmove_number),
             ('result', board.result()),
             ('isGameOver', board.is_game_over()),
@@ -74,7 +76,7 @@ class GameHandler(BaseHandler):
 
         self.finish(output)
 
-    def write_diagram(self, fen:str):
+    def write_ascii(self, fen:str):
 
         """
         Loops through a game board and prints it out as ascii. Useful for debugging.
