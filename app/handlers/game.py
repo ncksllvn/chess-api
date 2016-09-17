@@ -44,7 +44,7 @@ class GameHandler(BaseHandler):
             bestmove, ponder = command.result()
 
             board.push(bestmove)
-            self.write_board(board=board)
+            self.write_board(board=board, ai_move=bestmove.uci())
 
         except ValueError:
             self.set_status(400)
@@ -61,7 +61,7 @@ class GameHandler(BaseHandler):
 
         self.write_board(board=board)
 
-    def write_board(self, fen:str='', board:chess.Board=None):
+    def write_board(self, fen:str='', board:chess.Board=None, **kwargs):
 
         if not board:
             try:
@@ -107,6 +107,9 @@ class GameHandler(BaseHandler):
             ]))
 
         ])
+
+        for key, val in kwargs.items():
+            output[key] = val
 
         self.finish(output)
 
