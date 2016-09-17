@@ -16,7 +16,7 @@ class GameHandler(BaseHandler):
     def write_game(self, fen:str):
 
         if self.get_argument('diagram', False):
-            self.write_grid(fen)
+            self.write_diagram(fen)
             return
 
         board = chess.Board(fen)
@@ -56,7 +56,7 @@ class GameHandler(BaseHandler):
 
         self.finish(output)
 
-    def write_grid(self, fen:str):
+    def write_diagram(self, fen:str):
 
         """
         Loops through a game board and prints it out as ascii. Useful for debugging.
