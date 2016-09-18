@@ -64,6 +64,10 @@ class GameHandler(BaseHandler):
 
     async def write_json(self, board:chess.Board):
 
+        """
+        Writes all of the board info in json
+        """
+
         best_move = await self.get_best_move(board)
 
         output = OrderedDict([
