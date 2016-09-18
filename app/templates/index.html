@@ -1,0 +1,34 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>Chess Rest API</title>
+        <meta name="description" content="chess rest api">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+
+        </style>
+    </head>
+    <body>
+        <form action="game" method="get">
+            <fieldset>
+                <legend>Chess Rest API</legend>
+
+                <label for="fen">FEN: </label>
+                <input type="text" id="fen" name="fen" placeholder="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"/>
+
+                <label for="move">Move: </label>
+                <input type="text"  id="move" name="move" placeholder="b1a3">
+
+                <label for="format">Format</label>
+                <select id="format" name="format">
+                    <option value="json" selected>JSON</option>
+                    <option value="ascii">ASCII</option>
+                </select>
+
+                <input type="submit" value="Submit"/>
+            </fieldset>
+        </form>
+    </body>
+</html>

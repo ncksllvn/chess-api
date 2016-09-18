@@ -14,7 +14,7 @@ class GameHandler(BaseHandler):
         If no fen is provided, then it writes out the board in starting position.
         """
 
-        fen = self.get_argument('fen', chess.STARTING_FEN)
+        fen = self.get_argument('fen', None) or chess.STARTING_FEN
         move = self.get_argument('move', None)
 
         try:
@@ -135,8 +135,8 @@ class GameHandler(BaseHandler):
 
         fen = board.fen()
         rows = fen.split(' ')[0].split('/')
-        row_separator = '\n---|%s\n' % ('-' * 32)
-        output = row_separator
+        output = '---|%s\n' % ('-' * 32)
+        row_separator = '\n' + output
         row_nums = reversed(range(1,9))
 
         for row_num, row in zip(row_nums, rows):
@@ -152,4 +152,5 @@ class GameHandler(BaseHandler):
         for i in ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']:
             output += str(i) + ' | '
 
+        self.set_header('Content-Type', 'text/plain; charset=utf-8')
         self.finish(output)
