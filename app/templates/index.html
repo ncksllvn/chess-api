@@ -6,9 +6,11 @@
         <title>Chess Rest API</title>
         <meta name="description" content="chess rest api">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://fonts.googleapis.com/css?family=Yantramanav" rel="stylesheet">
         <style>
             body {
-                font-family: Helvetica, Arial, sans-serif;
+                font-family: 'Yantramanav', Helvetica, Arial, sans-serif;
+                background: #fbfbfb;
             }
 
             #wrapper {
@@ -19,6 +21,7 @@
             fieldset {
                 padding: 12px;
                 margin-bottom: 12px;
+                background: #fff;
             }
 
             label {
@@ -26,17 +29,15 @@
                 margin-bottom: 5px;
             }
 
-            input, select, button {
+            input, button {
                 display: inline-block;
                 width: 100%;
                 padding: 8px;
                 box-sizing: border-box;
             }
+
             .form-group {
                 margin-bottom: 15px;
-            }
-            .form-actions {
-                margin-top: 25px;
             }
 
         </style>
@@ -44,7 +45,7 @@
     <body>
         <div id="wrapper">
             <h1>Chess Rest API</h1>
-            <form action="game" method="get">
+           <form action="game" method="get">
                 <fieldset>
                     <legend>Board Info</legend>
 
