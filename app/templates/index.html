@@ -7,28 +7,73 @@
         <meta name="description" content="chess rest api">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
+            body {
+                font-family: Helvetica, Arial, sans-serif;
+            }
+
+            #wrapper {
+                max-width: 540px;
+                margin: 0 auto;
+            }
+
+            fieldset {
+                padding: 12px;
+                margin-bottom: 12px;
+            }
+
+            label {
+                display: inline-block;
+                margin-bottom: 5px;
+            }
+
+            input, select, button {
+                display: inline-block;
+                width: 100%;
+                padding: 8px;
+                box-sizing: border-box;
+            }
+            .form-group {
+                margin-bottom: 15px;
+            }
+            .form-actions {
+                margin-top: 25px;
+            }
 
         </style>
     </head>
     <body>
-        <form action="game" method="get">
-            <fieldset>
-                <legend>Chess Rest API</legend>
+        <div id="wrapper">
+            <h1>Chess Rest API</h1>
+            <form action="game" method="get">
+                <fieldset>
+                    <legend>Board Info</legend>
 
-                <label for="fen">FEN: </label>
-                <input type="text" id="fen" name="fen" placeholder="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"/>
+                    <div class="form-group">
+                        <label for="fen">Fen: <sup>1</sup></label>
+                        <input type="text" id="fen" name="fen" placeholder="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"/>
+                    </div>
 
-                <label for="move">Move: </label>
-                <input type="text"  id="move" name="move" placeholder="b1a3">
+                    <div class="form-group">
+                        <label for="move">Apply Move: <sup>2</sup></label>
+                        <input type="text"  id="move" name="move" placeholder="b1a3">
+                    </div>
 
-                <label for="format">Format</label>
-                <select id="format" name="format">
-                    <option value="json" selected>JSON</option>
-                    <option value="ascii">ASCII</option>
-                </select>
+                    <div class="form-group">
+                        <label for="format">Format:</label>
+                        <select id="format" name="format">
+                            <option value="json" selected>JSON</option>
+                            <option value="ascii">ASCII</option>
+                        </select>
+                    </div>
 
-                <input type="submit" value="Submit"/>
-            </fieldset>
-        </form>
+                    <div class="form-actions">
+                        <button type="submit">Submit</button>
+                    </div>
+                </fieldset>
+            </form>
+            <small><sup>1</sup> Learn about <a href="https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation">Forsyth–Edwards Notation</a></small>
+            <br/>
+            <small><sup>2</sup> Apply a move and get the resultant board data.</small>
+        </div>
     </body>
 </html>
