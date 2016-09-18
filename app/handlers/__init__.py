@@ -1,16 +1,7 @@
-import os.path
-import platform
 from chess import uci
+from tornado.options import options
 
-path = __path__[0]
-system = platform.system()
-
-if system == 'Darwin':
-    path += '../../../engines/stockfish/Mac/stockfish-7-64'
-else:
-    raise Exception('No engine found for your OS.')
-
-engine = uci.popen_engine(os.path.abspath(path))
+engine = uci.popen_engine(options.path_to_engine)
 engine.uci()
 
 from .base import BaseHandler

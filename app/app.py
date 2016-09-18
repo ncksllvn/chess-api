@@ -1,11 +1,7 @@
-
 import tornado.web
-from tornado.options import define, options
+from tornado.options import options
 
 from app.handlers import IndexHandler, GameHandler
-
-define('port', default=5000, help='run on the given port', type=int)
-define('debug', default=True, help='run in debug mode')
 
 
 class Application(tornado.web.Application):
@@ -16,6 +12,7 @@ class Application(tornado.web.Application):
             (r'/game', GameHandler),
         ]
         settings = dict(
+            engine=options.path_to_engine,
             debug=options.debug,
         )
         super(Application, self).__init__(handlers, **settings)
