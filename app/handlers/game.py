@@ -7,74 +7,61 @@ from app.handlers import BaseHandler, engine
 
 class GameHandler(BaseHandler):
 
+    @gen.coroutine
     def get(self):
-        fen = self.get_argument('fen', None)
-        self.write_board(fen)
 
-    def post(self):
-        self.write_board(board=chess.Board())
+        """
+        Write out all of the board information for a given FEN.
+        If no fen is provided, then it writes out the board in starting position.
+        """
 
-    @gen.coroutine
-    def put(self):
-
-        fen = self.get_argument('fen', None)
-        move = self.get_argument('move', 'ai')
-
-        if not fen:
-            self.set_status(400)
-            return
-
-        if move == 'ai':
-            yield self.do_ai_move(fen)
-            return
-
-        self.do_move(fen, move)
-
-    @gen.coroutine
-    def do_ai_move(self, fen):
+        fen = self.get_argument('fen', chess.STARTING_FEN)
+        move = self.get_argument('move', None)
 
         try:
+
             board = chess.Board(fen)
 
-            yield engine.position(board, async_callback=True)
-            command = engine.go(async_callback=True)
+            if move:
+                board.push_uci(move)
 
-            yield command
-
-            bestmove, ponder = command.result()
-
-            board.push(bestmove)
-            self.write_board(board=board, ai_move=bestmove.uci())
+            yield self.write_board(board)
 
         except ValueError:
             self.set_status(400)
-            return
 
-    def do_move(self, fen:str, move:str):
+    @gen.coroutine
+    def get_best_move(self, board: chess.Board):
 
-        try:
-            board = chess.Board(fen)
-            board.push_uci(move)
-        except ValueError:
-            self.set_status(400)
-            return
+        """
+        Retrieves the best move from the engine for the current board
+        """
 
-        self.write_board(board=board)
+        if board.is_game_over():
+            return None
 
-    def write_board(self, fen:str='', board:chess.Board=None, **kwargs):
+        yield engine.position(board, async_callback=True)
+        command = engine.go(async_callback=True)
 
-        if not board:
-            try:
-                board = chess.Board(fen)
-            except ValueError:
-                self.set_status(400)
-                return
+        yield command
+
+        bestmove, ponder = command.result()
+
+        return bestmove.uci()
+
+    @gen.coroutine
+    def write_board(self, board:chess.Board):
+
+        """
+        Writes out all of the board information in JSON
+        """
 
         if self.get_argument('format', 'json') == 'ascii':
             self.write_ascii(board.fen())
             return
 
-        current_turn = board.turn
+        best_move = yield self.get_best_move(board)
+
         output = OrderedDict([
 
             ('fen', board.fen()),
@@ -100,16 +87,14 @@ class GameHandler(BaseHandler):
             ('turn', OrderedDict([
                 ('color', 'white' if board.turn is chess.WHITE else 'black'),
                 ('isInCheck', board.is_check()),
+                ('bestMove', best_move),
                 ('legalMoves', [move.uci() for move in board.legal_moves]),
                 ('canClaimDraw', board.can_claim_draw()),
                 ('canClaimFiftyMoves', board.can_claim_fifty_moves()),
-                ('canClaimThreefoldRepetition', board.can_claim_threefold_repetition())
-            ]))
+                ('canClaimThreefoldRepetition', board.can_claim_threefold_repetition()),
+            ])),
 
         ])
-
-        for key, val in kwargs.items():
-            output[key] = val
 
         self.finish(output)
 
