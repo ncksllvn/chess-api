@@ -7,8 +7,7 @@ from app.handlers import BaseHandler, engine
 
 class GameHandler(BaseHandler):
 
-    @gen.coroutine
-    def get(self):
+    async def get(self):
 
         """
         Write out all of the board information for a given FEN.
@@ -25,7 +24,7 @@ class GameHandler(BaseHandler):
             if move:
                 board.push_uci(move)
 
-            yield self.write_board(board)
+            await self.write_board(board)
 
         except ValueError:
             self.set_status(400)
@@ -45,12 +44,11 @@ class GameHandler(BaseHandler):
 
         yield command
 
-        bestmove, ponder = command.result()
+        best_move, ponder_move = command.result()
 
-        return bestmove.uci()
+        return best_move.uci()
 
-    @gen.coroutine
-    def write_board(self, board:chess.Board):
+    async def write_board(self, board:chess.Board):
 
         """
         Writes out all of the board information in JSON
@@ -60,7 +58,7 @@ class GameHandler(BaseHandler):
             self.write_ascii(board.fen())
             return
 
-        best_move = yield self.get_best_move(board)
+        best_move = await self.get_best_move(board)
 
         output = OrderedDict([
 
