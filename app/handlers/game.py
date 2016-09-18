@@ -29,6 +29,20 @@ class GameHandler(BaseHandler):
         except ValueError:
             self.set_status(400)
 
+    async def write_board(self, board:chess.Board):
+
+        """
+        Writes out all of the board information in requested format (defaults to json)
+        """
+
+        format = self.get_argument('format', 'json')
+
+        if format == 'json':
+            await self.write_json(board)
+
+        elif format  == 'ascii':
+            self.write_ascii(board)
+
     @gen.coroutine
     def get_best_move(self, board: chess.Board):
 
@@ -48,15 +62,7 @@ class GameHandler(BaseHandler):
 
         return best_move.uci()
 
-    async def write_board(self, board:chess.Board):
-
-        """
-        Writes out all of the board information in JSON
-        """
-
-        if self.get_argument('format', 'json') == 'ascii':
-            self.write_ascii(board.fen())
-            return
+    async def write_json(self, board:chess.Board):
 
         best_move = await self.get_best_move(board)
 
@@ -96,7 +102,7 @@ class GameHandler(BaseHandler):
 
         self.finish(output)
 
-    def write_ascii(self, fen:str):
+    def write_ascii(self, board:chess.Board):
 
         """
         Loops through a game board and prints it out as ascii. Useful for debugging.
@@ -123,6 +129,7 @@ class GameHandler(BaseHandler):
 
         """
 
+        fen = board.fen()
         rows = fen.split(' ')[0].split('/')
         row_separator = '\n---|%s\n' % ('-' * 32)
         output = row_separator
