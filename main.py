@@ -23,7 +23,7 @@ def setup():
     debug = True
 
     if environment != 'development':
-        port = os.environ['PORT'] if 'PORT' in os.environ else 80
+        port = os.environ.get('PORT', 5000)
         debug = False
 
     define('port', default=port, help='run on the given port', type=int)
@@ -35,4 +35,5 @@ if __name__ == '__main__':
     from app import Application
     http_server = tornado.httpserver.HTTPServer(Application())
     http_server.listen(options.port)
+    print('Listening on port %s' % options.port)
     tornado.ioloop.IOLoop.current().start()
