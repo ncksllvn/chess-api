@@ -18,9 +18,11 @@ def setup():
         raise Exception('No engine for OS')
 
     engine_path = os.path.join(engine_path, engine_paths[system])
+    environment = os.environ['ENVIRONMENT'] if 'ENVIRONMENT' in os.environ else 'PRODUCTION'
+    port, debug = (8080, False) if environment == 'development' else (5000, True)
 
-    define('port', default=5000, help='run on the given port', type=int)
-    define('debug', default=True, help='run in debug mode')
+    define('port', default=port, help='run on the given port', type=int)
+    define('debug', default=debug, help='run in debug mode')
     define('path-to-engine', default=engine_path, help='the location of the chess engine')
 
 if __name__ == '__main__':
