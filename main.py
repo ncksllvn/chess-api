@@ -19,7 +19,12 @@ def setup():
 
     engine_path = os.path.join(engine_path, engine_paths[system])
     environment = os.environ['ENVIRONMENT'] if 'ENVIRONMENT' in os.environ else 'PRODUCTION'
-    port, debug = (8080, False) if environment == 'development' else (5000, True)
+    port = 5000
+    debug = True
+
+    if environment != 'development':
+        port = os.environ['PORT'] if 'PORT' in os.environ else 80
+        debug = False
 
     define('port', default=port, help='run on the given port', type=int)
     define('debug', default=debug, help='run in debug mode')
