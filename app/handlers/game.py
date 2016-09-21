@@ -53,7 +53,10 @@ class GameHandler(BaseHandler):
         if board.is_game_over():
             return None
 
+        yield engine.isready(async_callback=True)
+        yield engine.ucinewgame(async_callback=True)
         yield engine.position(board, async_callback=True)
+
         command = engine.go(async_callback=True)
 
         yield command
