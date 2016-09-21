@@ -7,7 +7,7 @@ from app.handlers import BaseHandler, engine
 
 class GameHandler(BaseHandler):
 
-    async def get(self):
+    def get(self):
 
         """
         Write out all of the board information for a given FEN.
@@ -24,12 +24,12 @@ class GameHandler(BaseHandler):
             if move:
                 board.push_uci(move)
 
-            await self.write_board(board)
+            self.write_board(board)
 
         except ValueError:
             self.set_status(400)
 
-    async def write_board(self, board:chess.Board):
+    def write_board(self, board:chess.Board):
 
         """
         Writes out all of the board information in requested format (defaults to json)
@@ -38,12 +38,11 @@ class GameHandler(BaseHandler):
         format = self.get_argument('format', 'json')
 
         if format == 'json':
-            await self.write_json(board)
+            self.write_json(board)
 
         elif format  == 'ascii':
             self.write_ascii(board)
 
-    @gen.coroutine
     def get_best_move(self, board: chess.Board):
 
         """
@@ -53,25 +52,21 @@ class GameHandler(BaseHandler):
         if board.is_game_over():
             return None
 
-        yield engine.isready(async_callback=True)
-        yield engine.ucinewgame(async_callback=True)
-        yield engine.position(board, async_callback=True)
+        engine.isready()
+        engine.ucinewgame()
+        engine.position(board)
 
-        command = engine.go(async_callback=True)
-
-        yield command
-
-        best_move, ponder_move = command.result()
+        best_move, ponder_move = engine.go()
 
         return best_move.uci()
 
-    async def write_json(self, board:chess.Board):
+    def write_json(self, board:chess.Board):
 
         """
         Writes all of the board info in json
         """
 
-        best_move = await self.get_best_move(board)
+        best_move = self.get_best_move(board)
 
         output = OrderedDict([
 
